@@ -1,0 +1,64 @@
+if !has('gui_running')
+  let g:pathogen_disabled = ['YouCompleteMe']
+endif
+execute pathogen#infect()
+set nocompatible
+set noswapfile
+set number
+set backspace=indent,eol,start
+set guifont=Source\ Code\ Pro\ Medium\:h13
+set equalalways
+
+set smarttab
+set nolist
+set tabstop=2
+set expandtab
+set shiftwidth=2
+set softtabstop=2
+
+let mapleader=" "
+syntax on
+filetype plugin indent on
+set background=dark
+colorscheme hybrid_material
+let g:enable_bold_font = 1
+let g:enable_italic_font = 1
+
+" remove trailing whitespaces
+autocmd BufWritePre * %s/\s\+$//e
+
+let g:buffergator_viewport_split_policy = "b"
+let g:buffergator_sort_regime = "mru"
+let g:buffergator_show_full_directory_path = 0
+
+map <Leader>n :NERDTreeToggle<CR>
+
+let g:jsx_ext_required = 0
+
+let g:ycm_semantic_triggers =  {
+    \   'css': ['    ', ': '],
+    \   'scss': ['    ', ': '],
+    \ }
+
+" ignore some folders
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git'
+
+" highlight Ag search
+let g:ag_highlight=1
+
+" grep current motion
+nnoremap <silent> gr :set opfunc=<SID>GrepMotion<CR>g@
+xnoremap <silent> gr :<C-U>call <SID>GrepMotion(visualmode())<CR>
+function! s:CopyMotionForType(type)
+  if a:type ==# 'v'
+    silent execute "normal! `<" . a:type . "`>y"
+  elseif a:type ==# 'char'
+    silent execute "normal! `[v`]y"
+  endif
+endfunction
+function! s:GrepMotion(type) abort
+  let reg_save = @@
+  call s:CopyMotionForType(a:type)
+  execute ":Ag " . shellescape(@@)
+  let @@ = reg_save
+endfunction
